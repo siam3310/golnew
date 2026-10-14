@@ -11,18 +11,15 @@
     <string name="close">Close</string>
 
     <!-- Settings -->
-    <string name="settings_playback">Playback &amp; Engine</string>
-    <string name="settings_hardware_accel">Hardware Acceleration (MediaCodec)</string>
-    <string name="settings_hardware_accel_desc">Native decoders for zero-latency streaming</string>
-    <string name="settings_low_latency">Ultra-Low Latency Buffer (2.5s)</string>
-    <string name="settings_low_latency_desc">Minimizes broadcast delay behind live window</string>
-    <string name="settings_cdn_protection">CDN Anti-Blocking Headers</string>
-    <string name="settings_cdn_protection_desc">Emulates browser headers to prevent HTTP 403</string>
+    <string name="settings_playback">Playback</string>
+    <string name="settings_hardware_accel">Hardware Acceleration</string>
+    <string name="settings_low_latency">Low Latency Mode</string>
+    <string name="settings_cdn_protection">Stream Protection</string>
     <string name="settings_cache">Storage</string>
-    <string name="settings_clear_cache">Clear Image Cache</string>
+    <string name="settings_clear_cache">Clear Cache</string>
     <string name="settings_cache_cleared">Cache cleared successfully</string>
     <string name="settings_about">About</string>
-    <string name="settings_version">Gol Sports v1.0.0 • Media3 Ultra-Fast Engine</string>
+    <string name="settings_version">free&amp;live v1.0.0</string>
 
     <!-- Date Relative -->
     <string name="today">TODAY</string>

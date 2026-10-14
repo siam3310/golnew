@@ -114,30 +114,19 @@ fun SettingsDialogMobile(
                 )
                 Text(
                     text = stringResource(R.string.settings),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
         },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // Section: Playback & Engine
-                Text(
-                    text = stringResource(R.string.settings_playback),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-
                 SettingsToggleRow(
                     icon = Icons.Default.Speed,
                     title = stringResource(R.string.settings_low_latency),
-                    subtitle = stringResource(R.string.settings_low_latency_desc),
                     checked = lowLatencyEnabled,
                     onCheckedChange = { lowLatencyEnabled = it }
                 )
@@ -145,7 +134,6 @@ fun SettingsDialogMobile(
                 SettingsToggleRow(
                     icon = Icons.Default.Settings,
                     title = stringResource(R.string.settings_hardware_accel),
-                    subtitle = stringResource(R.string.settings_hardware_accel_desc),
                     checked = hardwareAccelEnabled,
                     onCheckedChange = { hardwareAccelEnabled = it }
                 )
@@ -153,20 +141,11 @@ fun SettingsDialogMobile(
                 SettingsToggleRow(
                     icon = Icons.Default.NetworkCheck,
                     title = stringResource(R.string.settings_cdn_protection),
-                    subtitle = stringResource(R.string.settings_cdn_protection_desc),
                     checked = cdnHeadersEnabled,
                     onCheckedChange = { cdnHeadersEnabled = it }
                 )
 
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-                // Section: Storage
-                Text(
-                    text = stringResource(R.string.settings_cache),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                 Button(
                     onClick = {
@@ -179,7 +158,7 @@ fun SettingsDialogMobile(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.CleaningServices,
@@ -190,30 +169,12 @@ fun SettingsDialogMobile(
                     Text(text = stringResource(R.string.settings_clear_cache))
                 }
 
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-                // Section: About
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = stringResource(R.string.settings_version),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                Text(
+                    text = stringResource(R.string.settings_version),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         },
         confirmButton = {
@@ -228,7 +189,6 @@ fun SettingsDialogMobile(
 private fun SettingsToggleRow(
     icon: ImageVector,
     title: String,
-    subtitle: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
@@ -245,21 +205,14 @@ private fun SettingsToggleRow(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
             )
-            Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
         }
         Switch(
             checked = checked,

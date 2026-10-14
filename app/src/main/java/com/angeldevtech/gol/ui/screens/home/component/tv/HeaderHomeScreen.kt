@@ -1,6 +1,7 @@
 package com.angeldevtech.gol.ui.screens.home.component.tv
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
-import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
+import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import coil.Coil
 import com.angeldevtech.gol.R
@@ -116,64 +117,77 @@ fun SettingsDialogTV(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    BackHandler(onBack = onDismiss)
 
-    Surface(
-        onClick = onDismiss,
-        modifier = Modifier.fillMaxWidth(),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-        )
+    androidx.compose.ui.window.Dialog(
+        onDismissRequest = onDismiss
     ) {
-        Column(
-            modifier = Modifier
-                .padding(32.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Surface(
+            modifier = Modifier.width(420.dp),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+            colors = SurfaceDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
-            Text(
-                text = stringResource(R.string.settings),
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            Text(
-                text = stringResource(R.string.settings_low_latency),
-                color = Color.LightGray,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Button(
-                onClick = {
-                    try {
-                        Coil.imageLoader(context).memoryCache?.clear()
-                        Coil.imageLoader(context).diskCache?.clear()
-                        Toast.makeText(context, context.getString(R.string.settings_cache_cleared), Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(context, "Cache cleared", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(0.4f)
+            Column(
+                modifier = Modifier
+                    .padding(28.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.CleaningServices, contentDescription = null)
-                    Text(text = stringResource(R.string.settings_clear_cache))
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.settings),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
-            }
 
-            Text(
-                text = stringResource(R.string.settings_version),
-                color = Color.Gray,
-                style = MaterialTheme.typography.bodyMedium
-            )
+                Button(
+                    onClick = {
+                        try {
+                            Coil.imageLoader(context).memoryCache?.clear()
+                            Coil.imageLoader(context).diskCache?.clear()
+                            Toast.makeText(context, context.getString(R.string.settings_cache_cleared), Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Cache cleared", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CleaningServices,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(text = stringResource(R.string.settings_clear_cache))
+                    }
+                }
 
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth(0.3f)
-            ) {
-                Text(text = stringResource(R.string.close))
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.close))
+                }
+
+                Text(
+                    text = stringResource(R.string.settings_version),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
         }
     }

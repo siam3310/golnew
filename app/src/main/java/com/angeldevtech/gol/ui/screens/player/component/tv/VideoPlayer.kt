@@ -1,21 +1,25 @@
 package com.angeldevtech.gol.ui.screens.player.component.tv
 
-import android.view.SurfaceView
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import androidx.annotation.OptIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import com.angeldevtech.gol.ui.screens.player.AspectRatioMode
 
+@OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
     isPlaying: Boolean,
@@ -39,27 +43,44 @@ fun VideoPlayer(
         }
     }
 
+    val resizeMode = when (aspectRatioMode) {
+        AspectRatioMode.RESIZE_MODE_FIT -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+        AspectRatioMode.RESIZE_MODE_ZOOM -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+        AspectRatioMode.RESIZE_MODE_FILL -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+    }
+
     Box(
-        modifier = modifier.fillMaxSize().clipToBounds(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        val surfaceModifier = when (aspectRatioMode) {
-            AspectRatioMode.RESIZE_MODE_FIT -> Modifier.aspectRatio(16f / 9f)
-            AspectRatioMode.RESIZE_MODE_ZOOM -> Modifier.fillMaxSize().scale(1.35f)
-            AspectRatioMode.RESIZE_MODE_FILL -> Modifier.fillMaxSize()
-        }
-
         AndroidView(
             factory = { context ->
-                SurfaceView(context).apply {
-                    player.setVideoSurfaceView(this)
+                PlayerView(context).apply {
+                    this.player = player
+                    useController = false
+                    controllerAutoShow = false
+                    setShutterBackgroundColor(android.graphics.Color.BLACK)
+                    this.resizeMode = resizeMode
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
                 }
             },
-            update = { /* Surface is already attached in factory; do not reset on recomposition */ },
-            onRelease = { surfaceView ->
-                player.clearVideoSurfaceView(surfaceView)
+            update = { playerView ->
+                if (playerView.player != player) {
+                    playerView.player = player
+                }
+                if (playerView.resizeMode != resizeMode) {
+                    playerView.resizeMode = resizeMode
+                }
             },
-            modifier = surfaceModifier
+            onRelease = { playerView ->
+                playerView.player = null
+            },
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
