@@ -38,6 +38,23 @@ class PlayerViewModel @Inject constructor(
     private var lastLoadTime = 0L
     private val loadIntervalMs = 3 * 60 * 60 * 1000L
 
+    private val prefs by lazy {
+        application.getSharedPreferences("player_prefs", android.content.Context.MODE_PRIVATE)
+    }
+
+    private fun getSavedAspectRatioMode(): AspectRatioMode {
+        val savedName = prefs.getString("aspect_ratio_mode", null) ?: return AspectRatioMode.RESIZE_MODE_FIT
+        return try {
+            AspectRatioMode.valueOf(savedName)
+        } catch (e: Exception) {
+            AspectRatioMode.RESIZE_MODE_FIT
+        }
+    }
+
+    private fun saveAspectRatioMode(mode: AspectRatioMode) {
+        prefs.edit().putString("aspect_ratio_mode", mode.name).apply()
+    }
+
     private val _shouldEnterPipMode = MutableStateFlow(false)
     val shouldEnterPipMode: StateFlow<Boolean> = _shouldEnterPipMode.asStateFlow()
     private val _isInPipMode = MutableStateFlow(false)
@@ -156,7 +173,8 @@ class PlayerViewModel @Inject constructor(
             _uiState.value = PlayerUIState.Success(
                 scheduleItem = scheduleItem,
                 selectedEmbedIndex = 0,
-                isMuted = fastPlayer?.isMuted() ?: false
+                isMuted = fastPlayer?.isMuted() ?: false,
+                aspectRatioMode = getSavedAspectRatioMode()
             )
             loadContentForIndex(0)
         }
@@ -273,6 +291,7 @@ class PlayerViewModel @Inject constructor(
             val modes = AspectRatioMode.entries
             val currentIndex = modes.indexOf(currentState.aspectRatioMode)
             val nextMode = modes[(currentIndex + 1) % modes.size]
+            saveAspectRatioMode(nextMode)
             _uiState.value = currentState.copy(aspectRatioMode = nextMode)
         }
     }
@@ -280,6 +299,7 @@ class PlayerViewModel @Inject constructor(
     fun setAspectRatio(mode: AspectRatioMode) {
         val currentState = _uiState.value
         if (currentState is PlayerUIState.Success) {
+            saveAspectRatioMode(mode)
             _uiState.value = currentState.copy(aspectRatioMode = mode)
         }
     }

@@ -131,7 +131,8 @@ fun ItemCard(
                                 color = Color(0xFFFF5252),
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 11.sp,
-                                letterSpacing = 1.sp
+                                letterSpacing = 1.sp,
+                                modifier = Modifier.padding(bottom = 3.dp)
                             )
                         } else {
                             val relativeDayText = when (item.relativeDay.uppercase()) {
@@ -144,7 +145,8 @@ fun ItemCard(
                                 text = relativeDayText,
                                 color = paletteResult.textColor,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(bottom = 3.dp)
                             )
                         }
 
@@ -161,7 +163,8 @@ fun ItemCard(
                             text = item.hour.dropLast(3),
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.White.copy(alpha = 0.9f),
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 3.dp)
                         )
                     }
 
@@ -210,6 +213,7 @@ fun ItemCard(
                     ) {
                         Box(
                             modifier = Modifier
+                                .padding(bottom = 3.dp)
                                 .background(animatedChipColor, RoundedCornerShape(4.dp))
                                 .padding(8.dp, 4.dp),
                         ) {
@@ -228,13 +232,16 @@ fun ItemCard(
                         Text(
                             text = item.hour.dropLast(3),
                             style = MaterialTheme.typography.headlineLarge,
-                            color = Color.White
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 3.dp)
                         )
                     }
                 }
             }
         }
-        Column {
+        Column(
+            modifier = Modifier.padding(horizontal = 6.dp)
+        ) {
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.titleMedium,

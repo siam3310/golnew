@@ -123,7 +123,8 @@ fun ItemCardMobile(
                                     color = Color(0xFFFF5252),
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = (cardHeight * 0.095f).value.sp,
-                                    letterSpacing = 1.sp
+                                    letterSpacing = 1.sp,
+                                    modifier = Modifier.padding(bottom = cardHeight * 0.03f)
                                 )
                             } else {
                                 val relativeDayText = when (item.relativeDay.uppercase()) {
@@ -136,7 +137,8 @@ fun ItemCardMobile(
                                     text = relativeDayText,
                                     color = paletteResult.textColor,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = (cardHeight * 0.085f).value.sp
+                                    fontSize = (cardHeight * 0.085f).value.sp,
+                                    modifier = Modifier.padding(bottom = cardHeight * 0.03f)
                                 )
                             }
 
@@ -155,7 +157,8 @@ fun ItemCardMobile(
                                     fontSize = (cardHeight * 0.13f).value.sp
                                 ),
                                 color = Color.White.copy(alpha = 0.9f),
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = cardHeight * 0.03f)
                             )
                         }
 
@@ -204,6 +207,7 @@ fun ItemCardMobile(
                         ) {
                             Box(
                                 modifier = Modifier
+                                    .padding(bottom = cardHeight * 0.02f)
                                     .background(
                                         animatedChipColor,
                                         RoundedCornerShape(cardWidth * 0.02f)
@@ -232,14 +236,17 @@ fun ItemCardMobile(
                                     fontSize = (cardHeight * 0.20f).value.sp
                                 ),
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = cardHeight * 0.02f)
                             )
                         }
                     }
                 }
             }
         }
-        Column {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.titleMedium,
