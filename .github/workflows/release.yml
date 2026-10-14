@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,36 +30,54 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Build APK with Gradle
-        run: |
-          chmod +x gradlew 2>/dev/null || true
-          gradle :app:assembleDebug --stacktrace
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build APK with Gradle Wrapper
+        run: ./gradlew :app:assembleDebug --stacktrace
 
       - name: Prepare APK Asset
         run: |
           mkdir -p release-output
-          cp app/build/outputs/apk/debug/app-debug.apk release-output/free-and-live-v1.0.0.apk
+          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" -type f | head -n 1)
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" release-output/free-and-live-v1.0.0.apk
+            echo "Copied $APK_FILE to release-output/free-and-live-v1.0.0.apk"
+          else
+            echo "Error: APK not found!" && exit 1
+          fi
+
+      - name: Determine Release Tag
+        id: vars
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG="v1.0.0"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: ${{ github.ref_name || 'v1.0.0' }}
-          name: "free&live v1.0.0"
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: "free&live ${{ steps.vars.outputs.tag }}"
           body: |
-            ### 🚀 free&live - First Version Release (v1.0.0)
+            ### 🚀 free&live ${{ steps.vars.outputs.tag }} Release
 
-            - **Ultra-fast, zero-latency streaming engine**: Powered by AndroidX Media3 (ExoPlayer).
-            - **Hardware acceleration**: Direct MediaCodec decoding with zero black-screen lag.
-            - **CDN anti-blocking**: Chrome User-Agent and automatic Origin/Referer spoofing.
-            - **Aspect Ratio options**:
-              - `Fit` (RESIZE_MODE_FIT)
-              - `Zoom` (RESIZE_MODE_ZOOM)
-              - `Fill` (RESIZE_MODE_FILL)
-            - **Live sports**: Live cricket and football matches with multi-server failover.
-            - **Clean UI**: Centered match info, streamlined "vs", and dedicated Settings.
+            - **Aspect Ratio options**: Fit (RESIZE_MODE_FIT), Zoom (RESIZE_MODE_ZOOM), Fill (RESIZE_MODE_FILL)
+            - **Live matches & events**: Real-time sports streaming with low latency
+            - **Settings menu**: Easily configure stream preferences and cache
+            - **Clean layout**: Streamlined match titles with centered vs text
 
-            Download **free-and-live-v1.0.0.apk** below to install on your Android device!
+            #### 📥 Download
+            Download **free-and-live-v1.0.0.apk** below to install on your Android phone, tablet, or Android TV.
           files: release-output/free-and-live-v1.0.0.apk
           draft: false
           prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
