@@ -68,10 +68,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build APK with Gradle
+      - name: Build Release APK with Gradle (R8 Minified & Resource Shrunk)
         env:
           GRADLE_OPTS: "-Xmx3072m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
-        run: ./gradlew clean :app:assembleDebug --stacktrace
+        run: ./gradlew clean :app:assembleRelease --stacktrace
 
       - name: Determine Release Tag
         id: vars
@@ -85,17 +85,36 @@ jobs:
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Prepare APK Asset
+      - name: Prepare and Sign Release APK
         run: |
           mkdir -p release-output
           TAG="${{ steps.vars.outputs.tag }}"
-          APK_FILE=$(find app/build/outputs/apk -name "*.apk" -type f | head -n 1)
-          if [ -n "$APK_FILE" ]; then
-            cp "$APK_FILE" "release-output/free-and-live-${TAG}.apk"
-            echo "Copied $APK_FILE to release-output/free-and-live-${TAG}.apk"
+
+          # Locate Android build-tools for zipalign and apksigner
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "Using Android build-tools from: $BUILD_TOOLS_DIR"
+
+          UNSIGNED_APK=$(find app/build/outputs/apk -name "*unsigned*.apk" -type f | head -n 1)
+          if [ -n "$UNSIGNED_APK" ]; then
+            echo "Found unsigned release APK: $UNSIGNED_APK"
+            "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" "release-output/aligned.apk"
+            "$BUILD_TOOLS_DIR/apksigner" sign --ks debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android --out "release-output/free-and-live-${TAG}.apk" "release-output/aligned.apk"
+            rm -f "release-output/aligned.apk"
+            echo "Successfully signed release APK with apksigner."
           else
-            echo "Error: APK not found in app/build/outputs/apk!" && exit 1
+            APK_FILE=$(find app/build/outputs/apk/release -name "*.apk" -type f | head -n 1)
+            if [ -z "$APK_FILE" ]; then
+              APK_FILE=$(find app/build/outputs/apk -name "*.apk" -type f | head -n 1)
+            fi
+            if [ -n "$APK_FILE" ]; then
+              cp "$APK_FILE" "release-output/free-and-live-${TAG}.apk"
+            else
+              echo "Error: No APK found in app/build/outputs/apk!" && exit 1
+            fi
           fi
+
+          echo "Final APK details:"
+          ls -lh release-output/*.apk
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v2

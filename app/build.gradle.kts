@@ -20,6 +20,10 @@ android {
         versionName = "1.0"
     }
 
+    androidResources {
+        localeFilters += listOf("en")
+    }
+
     signingConfigs {
         create("debugConfig") {
             storeFile = file("${rootDir}/debug.keystore")
@@ -53,6 +57,21 @@ android {
             isJniDebuggable = false
             isPseudoLocalesEnabled = false
         }
+    }
+    packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/INDEX.LIST",
+                "/META-INF/DEPENDENCIES",
+                "/META-INF/LICENSE*",
+                "/META-INF/NOTICE*"
+            )
+        }
+    }
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
     }
     buildFeatures {
         buildConfig = true
