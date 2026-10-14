@@ -1,0 +1,420 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "attributes": {
+        "diary_description": "Bangladesh vs India",
+        "deportes": "Cricket",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Bangladesh",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/25.png",
+        "team2_name": "India",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/6.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "Asia Cup",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/cricket/500/25.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 101,
+              "attributes": {
+                "embed_name": "T Sports HD (Server 1)",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            },
+            {
+              "id": 102,
+              "attributes": {
+                "embed_name": "Star Sports 1 (Server 2)",
+                "idioma": "English",
+                "embed_iframe": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "attributes": {
+        "diary_description": "Real Madrid vs Barcelona",
+        "deportes": "Football",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Real Madrid",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+        "team2_name": "Barcelona",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "La Liga",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/leaguelogos/soccer/500/15.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 201,
+              "attributes": {
+                "embed_name": "Main Stream (HLS 1080p)",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            },
+            {
+              "id": 202,
+              "attributes": {
+                "embed_name": "Backup Stream (MP4 720p)",
+                "idioma": "English",
+                "embed_iframe": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "attributes": {
+        "diary_description": "Pakistan vs England",
+        "deportes": "Cricket",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Pakistan",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/7.png",
+        "team2_name": "England",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/1.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "T20 International",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/cricket/500/7.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 301,
+              "attributes": {
+                "embed_name": "Sky Sports Cricket",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "attributes": {
+        "diary_description": "Manchester City vs Liverpool",
+        "deportes": "Football",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Manchester City",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
+        "team2_name": "Liverpool",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "Premier League",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/leaguelogos/soccer/500/23.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 401,
+              "attributes": {
+                "embed_name": "Sky Sports Main Event",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 5,
+      "attributes": {
+        "diary_description": "Australia vs South Africa",
+        "deportes": "Cricket",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Australia",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/2.png",
+        "team2_name": "South Africa",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/3.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "ICC Championship",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/cricket/500/2.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 501,
+              "attributes": {
+                "embed_name": "Fox Cricket HD",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "attributes": {
+        "diary_description": "Chelsea vs Paris Saint-Germain",
+        "deportes": "Football",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Chelsea",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
+        "team2_name": "Paris Saint-Germain",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "UEFA Champions League",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/leaguelogos/soccer/500/2.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 601,
+              "attributes": {
+                "embed_name": "Canal+ Foot HD",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "attributes": {
+        "diary_description": "Inter Milan vs Juventus",
+        "deportes": "Football",
+        "date_diary": "today",
+        "diary_hour": "now",
+        "is_live": true,
+        "team1_name": "Inter Milan",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+        "team2_name": "Juventus",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "Serie A",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 701,
+              "attributes": {
+                "embed_name": "TNT Sports 2",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 8,
+      "attributes": {
+        "diary_description": "Arsenal vs Bayern Munich",
+        "deportes": "Football",
+        "date_diary": "tomorrow",
+        "diary_hour": "20:00:00",
+        "is_live": false,
+        "team1_name": "Arsenal",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
+        "team2_name": "Bayern Munich",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "UEFA Champions League",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/leaguelogos/soccer/500/2.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 801,
+              "attributes": {
+                "embed_name": "TNT Sports 1",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 9,
+      "attributes": {
+        "diary_description": "AC Milan vs Manchester United",
+        "deportes": "Football",
+        "date_diary": "tomorrow",
+        "diary_hour": "21:00:00",
+        "is_live": false,
+        "team1_name": "AC Milan",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
+        "team2_name": "Manchester United",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "UEFA Europa League",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 901,
+              "attributes": {
+                "embed_name": "Server 1 HD",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 10,
+      "attributes": {
+        "diary_description": "New Zealand vs Sri Lanka",
+        "deportes": "Cricket",
+        "date_diary": "tomorrow",
+        "diary_hour": "15:30:00",
+        "is_live": false,
+        "team1_name": "New Zealand",
+        "team1_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/4.png",
+        "team2_name": "Sri Lanka",
+        "team2_logo": "https://a.espncdn.com/i/teamlogos/cricket/500/5.png",
+        "country": {
+          "data": {
+            "attributes": {
+              "name": "ODI Series",
+              "image": {
+                "data": {
+                  "attributes": {
+                    "url": "https://a.espncdn.com/i/teamlogos/cricket/500/4.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "embeds": {
+          "data": [
+            {
+              "id": 1001,
+              "attributes": {
+                "embed_name": "Sky Sport 1 NZ",
+                "idioma": "English",
+                "embed_iframe": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

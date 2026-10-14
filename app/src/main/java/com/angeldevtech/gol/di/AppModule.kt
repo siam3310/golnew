@@ -1,0 +1,83 @@
+package com.angeldevtech.gol.di
+
+import android.content.Context
+import com.angeldevtech.gol.data.remote.ApiService
+import com.angeldevtech.gol.data.remote.ApiServiceImpl
+import com.angeldevtech.gol.data.repositories.PlayerRepositoryImpl
+import com.angeldevtech.gol.data.repositories.ScheduleRepositoryImpl
+import com.angeldevtech.gol.domain.repositories.PlayerRepository
+import com.angeldevtech.gol.domain.repositories.ScheduleRepository
+import com.angeldevtech.gol.utils.DateChangeObserver
+import com.angeldevtech.gol.utils.DeviceTypeProvider
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideKtorClient(): HttpClient {
+        return HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                })
+            }
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiService(@ApplicationContext context: Context, client: HttpClient): ApiService {
+        return ApiServiceImpl(context) { client }
+    }
+
+    @Provides
+    @Singleton
+    fun provideApplicationScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDateChangeObserver(@ApplicationContext context: Context): DateChangeObserver {
+        return DateChangeObserver(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideScheduleRepository(
+        apiService: ApiService,
+        dateChangeObserver: DateChangeObserver,
+        applicationScope: CoroutineScope
+    ): ScheduleRepository {
+        return ScheduleRepositoryImpl(apiService, dateChangeObserver, applicationScope)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlayerRepository(): PlayerRepository {
+        return PlayerRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeviceTypeProvider(@ApplicationContext context: Context): DeviceTypeProvider {
+        return DeviceTypeProvider(context)
+    }
+}

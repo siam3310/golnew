@@ -1,0 +1,111 @@
+package com.angeldevtech.gol.ui.screens.player
+
+import android.app.Activity
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.angeldevtech.gol.ui.screens.player.component.tv.ErrorPlayerScreen
+import com.angeldevtech.gol.ui.screens.player.component.tv.LoadingIndicator
+import com.angeldevtech.gol.ui.screens.player.component.tv.PlayerControlsOverlay
+import com.angeldevtech.gol.ui.screens.player.component.tv.VideoPlayer
+import com.angeldevtech.gol.utils.isDpadCenterKey
+import com.angeldevtech.gol.utils.isDpadMovementKey
+
+@Composable
+fun PlayerScreen(
+    viewModel: PlayerViewModel = hiltViewModel(),
+    onBack: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val window = (context as? Activity)?.window
+    val player = remember { viewModel.getPlayer() }
+
+    BackHandler(onBack = onBack)
+
+    val isButtonEnabled = remember { mutableStateOf(true) }
+
+    LifecycleStartEffect(Unit) {
+        viewModel.onLoad()
+        isButtonEnabled.value = true
+        onStopOrDispose { viewModel.stopPlayer() }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .focusable()
+            .onKeyEvent { keyEvent ->
+                if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key.isDpadMovementKey()) {
+                    isButtonEnabled.value = true
+                    viewModel.showOverlayTemporarily()
+                    return@onKeyEvent false
+                }
+                if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key.isDpadCenterKey()) {
+                    val currentSuccessState = uiState as? PlayerUIState.Success
+                    if (currentSuccessState != null && !currentSuccessState.isOverlayVisible) {
+                        isButtonEnabled.value = false
+                    }
+                    viewModel.showOverlayTemporarily()
+                    return@onKeyEvent false
+                }
+                false
+            }
+    ) {
+        when (val state = uiState) {
+            is PlayerUIState.Loading -> {
+                LoadingIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+            is PlayerUIState.Error -> {
+                ErrorPlayerScreen(
+                    state = state,
+                    retry = { viewModel.onLoad() },
+                    onBack = onBack,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            is PlayerUIState.Success -> {
+                VideoPlayer(
+                    isPlaying = state.isPlaying,
+                    window = window,
+                    player = player,
+                    aspectRatioMode = state.aspectRatioMode
+                )
+
+                AnimatedVisibility(
+                    visible = state.isOverlayVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    PlayerControlsOverlay(
+                        state = state,
+                        viewModel = viewModel,
+                        isButtonEnabled = isButtonEnabled.value,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+    }
+}
