@@ -95,14 +95,28 @@ fun PlayerControlsOverlay(
             )
         }
 
-        PlayerOverlaySources(
-            state = state,
-            viewModel = viewModel,
-            sourcesListFocusRequester = sourcesListFocusRequester,
+        androidx.compose.foundation.layout.Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 48.dp, vertical = 24.dp),
-        )
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+        ) {
+            if (state.isMovieSeries) {
+                com.angeldevtech.gol.ui.screens.player.component.mobile.VideoPlayLine(
+                    currentPositionMs = state.currentPositionMs,
+                    durationMs = state.durationMs,
+                    onSeek = { targetMs -> viewModel.seekTo(targetMs) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            PlayerOverlaySources(
+                state = state,
+                viewModel = viewModel,
+                sourcesListFocusRequester = sourcesListFocusRequester,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

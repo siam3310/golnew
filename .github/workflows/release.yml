@@ -98,7 +98,7 @@ jobs:
           if [ -n "$UNSIGNED_APK" ]; then
             echo "Found unsigned release APK: $UNSIGNED_APK"
             "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" "release-output/aligned.apk"
-            "$BUILD_TOOLS_DIR/apksigner" sign --ks debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android --out "release-output/free-and-live-${TAG}.apk" "release-output/aligned.apk"
+            "$BUILD_TOOLS_DIR/apksigner" sign --ks debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android --out "release-output/FakeOTT-${TAG}.apk" "release-output/aligned.apk"
             rm -f "release-output/aligned.apk"
             echo "Successfully signed release APK with apksigner."
           else
@@ -107,7 +107,7 @@ jobs:
               APK_FILE=$(find app/build/outputs/apk -name "*.apk" -type f | head -n 1)
             fi
             if [ -n "$APK_FILE" ]; then
-              cp "$APK_FILE" "release-output/free-and-live-${TAG}.apk"
+              cp "$APK_FILE" "release-output/FakeOTT-${TAG}.apk"
             else
               echo "Error: No APK found in app/build/outputs/apk!" && exit 1
             fi
@@ -120,18 +120,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
-          name: "free&live ${{ steps.vars.outputs.tag }}"
+          name: "FakeOTT ${{ steps.vars.outputs.tag }}"
           body: |
-            ### 🚀 free&live ${{ steps.vars.outputs.tag }} Release
+            ### 🍿 FakeOTT ~ yeah it's fake! ${{ steps.vars.outputs.tag }} Release
 
-            - **Aspect Ratio options**: Fit (RESIZE_MODE_FIT), Zoom (RESIZE_MODE_ZOOM), Fill (RESIZE_MODE_FILL)
-            - **Video scaling fix**: Native AspectRatioFrameLayout prevents video expansion during live streams
-            - **Live matches & events**: Real-time sports streaming with low latency
-            - **Lightweight settings**: Clean, uncluttered preferences dialog
-            - **Android TV & Mobile**: Optimized layouts for both handheld and TV remote controls
-
-            #### 📥 Download
-            Download the APK attached below to install on your Android phone, tablet, or Android TV.
+            - **Matches & Sports Streaming**: Live match schedules from fakeottadmin API with instant playback
+            - **Movie Streaming Page**: Integrated streaming movies & series with quality selector (1080p, 720p, 480p)
+            - **Bottom Navigation**: Seamless tab navigation between Sports and Movies
+            - **Remember Aspect Ratio**: Remembers your preferred aspect ratio (Fit, Zoom, Fill)
+            - **Ultra-lightweight APK**: Highly optimized under 10MB!
           files: release-output/*.apk
           draft: false
           prerelease: false

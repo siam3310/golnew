@@ -11,15 +11,25 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.angeldevtech.gol.ui.screens.player.component.mobile.ErrorMobilePlayerScreen
@@ -215,6 +225,26 @@ fun MobilePlayerScreen(
             }
 
             is PlayerUIState.Success -> {
+                var seekFeedbackText by remember { mutableStateOf<String?>(null) }
+                var seekFeedbackSide by remember { mutableStateOf<Int?>(null) } // -1 = left, 1 = right
+
+                LaunchedEffect(seekFeedbackText) {
+                    if (seekFeedbackText != null) {
+                        kotlinx.coroutines.delay(700)
+                        seekFeedbackText = null
+                        seekFeedbackSide = null
+                    }
+                }
+
+                val performDoubleTapSeek: (Boolean) -> Unit = { isForward ->
+                    if (state.isMovieSeries) {
+                        val delta = if (isForward) 10_000L else -10_000L
+                        viewModel.seekBy(delta)
+                        seekFeedbackText = if (isForward) "+10s" else "-10s"
+                        seekFeedbackSide = if (isForward) 1 else -1
+                    }
+                }
+
                 if (showPlayer) {
                     VideoPlayer(
                         isPlaying = state.isPlaying,
@@ -233,13 +263,84 @@ fun MobilePlayerScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.safeDrawing)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            role = Role.Button,
-                            onClick = { viewModel.showOverlayTemporarily() }
-                        )
+                        .pointerInput(state.isMovieSeries) {
+                            detectTapGestures(
+                                onTap = { viewModel.showOverlayTemporarily() },
+                                onDoubleTap = { offset ->
+                                    if (state.isMovieSeries) {
+                                        val isForward = offset.x >= size.width / 2
+                                        performDoubleTapSeek(isForward)
+                                    }
+                                }
+                            )
+                        }
                 )
+
+                // Visual Seek Feedback Overlay (for Movie Series double tap)
+                AnimatedVisibility(
+                    visible = seekFeedbackText != null,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        if (seekFeedbackSide == -1) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(start = 56.dp)
+                                    .background(
+                                        Color.Black.copy(alpha = 0.75f),
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "⏪",
+                                        fontSize = 20.sp
+                                    )
+                                    Text(
+                                        text = "10s",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                }
+                            }
+                        } else if (seekFeedbackSide == 1) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(end = 56.dp)
+                                    .background(
+                                        Color.Black.copy(alpha = 0.75f),
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "10s",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                    Text(
+                                        text = "⏩",
+                                        fontSize = 20.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
 
                 AnimatedVisibility(
                     visible = state.isOverlayVisible && !isInPipMode,
@@ -251,6 +352,7 @@ fun MobilePlayerScreen(
                         state = state,
                         viewModel = viewModel,
                         onBackClick = proactiveOnBack,
+                        onDoubleTapSeek = performDoubleTapSeek,
                         modifier = Modifier
                             .fillMaxSize()
                     )

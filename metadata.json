@@ -1,6 +1,6 @@
 {
-  "name": "free&live",
-  "description": "Ultra-fast live sports and match streaming player",
+  "name": "FakeOTT",
+  "description": "FakeOTT ~ yeah it's fake! Stream live sports and movies.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

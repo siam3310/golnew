@@ -14,8 +14,9 @@
 }
 -keep @kotlinx.serialization.Serializable class * { *; }
 
-# Data models
--keep class com.angeldevtech.gol.data.model.** { *; }
+# Data & domain models
+-keep class com.angeldevtech.gol.data.models.** { *; }
+-keep class com.angeldevtech.gol.domain.models.** { *; }
 
 # Hilt / Dagger
 -keep class * extends dagger.hilt.internal.GeneratedComponent

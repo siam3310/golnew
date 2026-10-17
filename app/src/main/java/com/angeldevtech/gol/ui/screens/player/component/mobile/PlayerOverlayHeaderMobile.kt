@@ -14,9 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,11 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.angeldevtech.gol.R
 import com.angeldevtech.gol.domain.models.ScheduleItem
 import com.angeldevtech.gol.ui.screens.player.AspectRatioMode
 
@@ -150,7 +149,7 @@ fun PlayerOverlayHeaderMobile(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AspectRatio,
+                        painter = painterResource(id = R.drawable.ic_aspect_ratio),
                         contentDescription = "Aspect Ratio",
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
@@ -173,7 +172,7 @@ fun PlayerOverlayHeaderMobile(
                     .background(Color.Black.copy(alpha = 0.5f))
             ) {
                 Icon(
-                    imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                    painter = painterResource(id = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_up),
                     contentDescription = if (isMuted) "Unmute" else "Mute",
                     tint = if (isMuted) Color.Red else Color.White,
                     modifier = Modifier.size(22.dp)

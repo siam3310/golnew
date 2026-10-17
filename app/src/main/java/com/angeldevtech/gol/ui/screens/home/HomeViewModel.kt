@@ -34,11 +34,14 @@ import java.time.LocalTime
 class HomeViewModel @Inject constructor(
     private val getScheduleCategories: GetScheduleCategoriesUseCase,
     private val refreshSchedule: RefreshScheduleUseCase,
+    private val scheduleRepository: com.angeldevtech.gol.domain.repositories.ScheduleRepository,
     private val application: Application
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState.Loading)
     val uiState: StateFlow<HomeUIState> = _uiState
+
+    val movies: StateFlow<List<com.angeldevtech.gol.domain.models.MovieItem>?> = scheduleRepository.observeMovies()
 
     private val _paletteCache = mutableStateMapOf<String, PaletteResult>()
     val paletteCache: Map<String, PaletteResult> get() = _paletteCache
@@ -143,6 +146,9 @@ class HomeViewModel @Inject constructor(
         if (force || shouldRefreshByTime || _uiState.value !is HomeUIState.Success) {
             lastRefreshTime = currentTime
             observeSchedule()
+            viewModelScope.launch(Dispatchers.IO) {
+                scheduleRepository.refreshMovies()
+            }
         }
     }
 

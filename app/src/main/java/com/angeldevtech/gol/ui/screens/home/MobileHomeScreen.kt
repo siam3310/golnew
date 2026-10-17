@@ -49,6 +49,17 @@ import com.angeldevtech.gol.ui.screens.home.component.mobile.ItemCardMobile
 import com.angeldevtech.gol.utils.PeriodicTimeUpdateWhileResumed
 import com.angeldevtech.gol.utils.findActivity
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import com.angeldevtech.gol.domain.models.toScheduleItem
+import com.angeldevtech.gol.ui.screens.movies.MoviesScreen
+
 private const val CATEGORY_LIVE_ID = "internal_live_upcoming"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +73,12 @@ fun MobileHomeScreen(
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
     val activity = context.findActivity() as? ComponentActivity ?: return
+
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) } // 0 = Sports, 1 = Movies
+
+    BackHandler(enabled = selectedTab != 0) {
+        selectedTab = 0
+    }
 
     LifecycleStartEffect(Unit) {
         viewModel.onRefresh()
@@ -96,9 +113,50 @@ fun MobileHomeScreen(
                 ),
                 expandedHeight = TopAppBarDefaults.TopAppBarExpandedHeight - 16.dp
             )
+        },
+        bottomBar = {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 6.dp
+            ) {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_sports),
+                            contentDescription = stringResource(R.string.nav_sports),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.nav_sports)) },
+                    modifier = Modifier.testTag("bottom_tab_sports")
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_movie),
+                            contentDescription = stringResource(R.string.nav_movies),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.nav_movies)) },
+                    modifier = Modifier.testTag("bottom_tab_movies")
+                )
+            }
         }
     ) { innerPadding ->
-        when (val state = uiState) {
+        if (selectedTab == 1) {
+            MoviesScreen(
+                onMovieSelected = { movie ->
+                    onItemSelected(movie.toScheduleItem())
+                },
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            when (val state = uiState) {
             is HomeUIState.Loading -> {
                 LoadingMobileHomeScreen(
                     modifier = Modifier
@@ -207,4 +265,5 @@ fun MobileHomeScreen(
             }
         }
     }
+}
 }

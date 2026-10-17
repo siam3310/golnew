@@ -2,23 +2,18 @@ package com.angeldevtech.gol.ui.screens.player.component.tv
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +23,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
+import com.angeldevtech.gol.R
 import com.angeldevtech.gol.domain.models.ScheduleItem
 import com.angeldevtech.gol.ui.screens.player.AspectRatioMode
 
@@ -106,7 +102,7 @@ fun PlayerOverlayHeader(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(
                 onClick = onToggleAspectRatio,
@@ -119,7 +115,7 @@ fun PlayerOverlayHeader(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AspectRatio,
+                        painter = painterResource(id = R.drawable.ic_aspect_ratio),
                         contentDescription = "Aspect Ratio",
                         modifier = Modifier.size(20.dp)
                     )
@@ -134,7 +130,7 @@ fun PlayerOverlayHeader(
                 )
             ) {
                 Icon(
-                    imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                    painter = painterResource(id = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_up),
                     contentDescription = if (isMuted) "Unmute" else "Mute",
                     modifier = Modifier.size(20.dp)
                 )

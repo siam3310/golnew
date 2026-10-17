@@ -1,19 +1,18 @@
 package com.angeldevtech.gol.ui.screens.player.component.tv
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.IconButtonDefaults
+import com.angeldevtech.gol.R
 
 @Composable
 fun PlayerOverlayPlayPauseButton(
@@ -48,7 +47,7 @@ fun PlayerOverlayPlayPauseButton(
         )
     ) {
         Icon(
-            imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+            painter = painterResource(id = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
             contentDescription = if (isPlaying) "Pause" else "Play",
             modifier = Modifier.size(100.dp)
         )

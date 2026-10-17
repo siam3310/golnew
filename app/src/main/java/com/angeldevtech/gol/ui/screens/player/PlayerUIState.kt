@@ -19,7 +19,10 @@ sealed interface PlayerUIState {
         val error: String? = null,
         val isPlaying: Boolean = false,
         val isMuted: Boolean = false,
-        val aspectRatioMode: AspectRatioMode = AspectRatioMode.RESIZE_MODE_FIT
+        val aspectRatioMode: AspectRatioMode = AspectRatioMode.RESIZE_MODE_FIT,
+        val currentPositionMs: Long = 0L,
+        val durationMs: Long = 0L,
+        val isMovieSeries: Boolean = false
     ) : PlayerUIState
     data class Error(
         val message: String,

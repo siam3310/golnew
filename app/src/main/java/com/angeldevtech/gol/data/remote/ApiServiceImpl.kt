@@ -2,8 +2,10 @@ package com.angeldevtech.gol.data.remote
 
 import android.content.Context
 import com.angeldevtech.gol.BuildConfig
+import com.angeldevtech.gol.data.models.MovieResponseDto
 import com.angeldevtech.gol.data.models.ScheduleDto
 import com.angeldevtech.gol.data.models.ScheduleItemDto
+import com.angeldevtech.gol.data.models.ScrapedMediaDto
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
@@ -23,23 +25,43 @@ class ApiServiceImpl @Inject constructor(
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
+        isLenient = true
     }
 
     override suspend fun fetchSchedule(): List<ScheduleItemDto> {
-        val url = BuildConfig.API_BASE_URL.trim()
-        if (url.isNotBlank() && url != "https://api.example.com" && !url.contains("example.com")) {
-            try {
-                val response: ScheduleDto = client
-                    .get(url)
-                    .body()
-                if (response.data.isNotEmpty()) {
-                    return response.data
-                }
-            } catch (e: Exception) {
-                // If remote fetch fails, fall back to bundled sample file
+        val configuredUrl = BuildConfig.API_BASE_URL.trim()
+        val url = if (configuredUrl.isNotBlank() && configuredUrl != "https://api.example.com" && !configuredUrl.contains("example.com")) {
+            configuredUrl
+        } else {
+            "https://fakeottadmin.ai.studio/api/matches"
+        }
+
+        try {
+            val response: ScheduleDto = client
+                .get(url)
+                .body()
+            if (response.data.isNotEmpty()) {
+                return response.data
             }
+        } catch (e: Exception) {
+            // Fall back to bundled sample file
         }
         return loadBundledSchedule()
+    }
+
+    override suspend fun fetchMovies(): List<ScrapedMediaDto> {
+        val movieUrl = "https://raw.githubusercontent.com/siam3310/fibw/refs/heads/main/scraped-links-lxml.json"
+        try {
+            val response: MovieResponseDto = client
+                .get(movieUrl)
+                .body()
+            if (response.media.isNotEmpty()) {
+                return response.media
+            }
+        } catch (e: Exception) {
+            // Fall back to bundled movies
+        }
+        return loadBundledMovies()
     }
 
     private fun loadBundledSchedule(): List<ScheduleItemDto> {
@@ -47,6 +69,16 @@ class ApiServiceImpl @Inject constructor(
             val jsonString = context.assets.open("sample_schedule.json").bufferedReader().use { it.readText() }
             val dto = json.decodeFromString<ScheduleDto>(jsonString)
             dto.data
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun loadBundledMovies(): List<ScrapedMediaDto> {
+        return try {
+            val jsonString = context.assets.open("sample_movies.json").bufferedReader().use { it.readText() }
+            val dto = json.decodeFromString<MovieResponseDto>(jsonString)
+            dto.media
         } catch (e: Exception) {
             emptyList()
         }

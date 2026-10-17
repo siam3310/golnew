@@ -75,9 +75,29 @@ class FastMedia3Player(private val context: Context) {
             setDefaultRequestProperties(defaultHeaders)
         }
         val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
-        val mediaItem = MediaItem.fromUri(uri)
 
-        val targetType = forcedType ?: Util.inferContentType(uri)
+        val isMkv = url.contains(".mkv", ignoreCase = true) || url.contains("matroska", ignoreCase = true)
+        val isMp4 = url.contains(".mp4", ignoreCase = true)
+        val isHls = url.contains(".m3u8", ignoreCase = true)
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(uri)
+            .apply {
+                if (isMkv) {
+                    setMimeType(androidx.media3.common.MimeTypes.VIDEO_MATROSKA)
+                } else if (isMp4) {
+                    setMimeType(androidx.media3.common.MimeTypes.VIDEO_MP4)
+                } else if (isHls) {
+                    setMimeType(androidx.media3.common.MimeTypes.APPLICATION_M3U8)
+                }
+            }
+            .build()
+
+        val targetType = forcedType ?: when {
+            isHls -> C.CONTENT_TYPE_HLS
+            isMkv || isMp4 -> C.CONTENT_TYPE_OTHER
+            else -> Util.inferContentType(uri)
+        }
 
         val mediaSource = when (targetType) {
             C.CONTENT_TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
@@ -128,6 +148,23 @@ class FastMedia3Player(private val context: Context) {
         val newMuted = exoPlayer.volume > 0f
         setMuted(newMuted)
         return newMuted
+    }
+
+    fun getCurrentPosition(): Long = exoPlayer.currentPosition
+
+    fun getDuration(): Long {
+        val dur = exoPlayer.duration
+        return if (dur > 0 && dur != androidx.media3.common.C.TIME_UNSET) dur else 0L
+    }
+
+    fun seekTo(positionMs: Long) {
+        val duration = getDuration()
+        val target = if (duration > 0) positionMs.coerceIn(0L, duration) else positionMs.coerceAtLeast(0L)
+        exoPlayer.seekTo(target)
+    }
+
+    fun seekBy(deltaMs: Long) {
+        seekTo(exoPlayer.currentPosition + deltaMs)
     }
 
     fun release() {

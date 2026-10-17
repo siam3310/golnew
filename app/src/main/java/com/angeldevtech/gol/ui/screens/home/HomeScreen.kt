@@ -31,6 +31,9 @@ import com.angeldevtech.gol.ui.screens.home.component.tv.EmptyList
 import com.angeldevtech.gol.ui.screens.home.component.tv.ErrorHomeScreen
 import com.angeldevtech.gol.ui.screens.home.component.tv.HeaderHomeScreen
 import com.angeldevtech.gol.ui.screens.home.component.tv.LoadingHomeScreen
+import androidx.compose.foundation.layout.padding
+import com.angeldevtech.gol.domain.models.toScheduleItem
+import com.angeldevtech.gol.ui.screens.home.component.tv.MovieCardTv
 import com.angeldevtech.gol.utils.PeriodicTimeUpdateWhileResumed
 
 private const val CATEGORY_LIVE_ID = "internal_live_upcoming"
@@ -41,6 +44,7 @@ fun HomeScreen(
     onItemSelected: (ScheduleItem) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val movies by viewModel.movies.collectAsStateWithLifecycle()
 
     val focusManager = LocalFocusManager.current
     val initialListFocusRequester = remember { FocusRequester() }
@@ -147,13 +151,61 @@ fun HomeScreen(
                                 initialFocusKey = if (category.name == initialFocusCategoryId) initialFocusKey else null
                             )
                         }
+
+                        val movieList = movies
+                        if (!movieList.isNullOrEmpty()) {
+                            item(key = "header_movies_tv") {
+                                androidx.tv.material3.Text(
+                                    text = stringResource(R.string.nav_movies),
+                                    style = androidx.tv.material3.MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.padding(horizontal = 48.dp, vertical = 20.dp)
+                                )
+                            }
+                            items(
+                                items = movieList,
+                                key = { "movie_${it.id}" },
+                                contentType = { "MovieItemTv" }
+                            ) { movie ->
+                                MovieCardTv(
+                                    movie = movie,
+                                    onClick = { onItemSelected(movie.toScheduleItem()) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 48.dp, vertical = 6.dp)
+                                )
+                            }
+                        }
                     } else {
-                        item(contentType = "EmptyList") {
-                            EmptyList(
-                                modifier = Modifier
-                                    .height(scope.maxHeight - 100.dp)
-                                    .fillMaxWidth()
-                            )
+                        val movieList = movies
+                        if (!movieList.isNullOrEmpty()) {
+                            item(key = "header_movies_tv") {
+                                androidx.tv.material3.Text(
+                                    text = stringResource(R.string.nav_movies),
+                                    style = androidx.tv.material3.MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.padding(horizontal = 48.dp, vertical = 20.dp)
+                                )
+                            }
+                            items(
+                                items = movieList,
+                                key = { "movie_${it.id}" },
+                                contentType = { "MovieItemTv" }
+                            ) { movie ->
+                                MovieCardTv(
+                                    movie = movie,
+                                    onClick = { onItemSelected(movie.toScheduleItem()) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 48.dp, vertical = 6.dp)
+                                )
+                            }
+                        } else {
+                            item(contentType = "EmptyList") {
+                                EmptyList(
+                                    modifier = Modifier
+                                        .height(scope.maxHeight - 100.dp)
+                                        .fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }

@@ -12,11 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CleaningServices
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,10 +64,19 @@ fun HeaderHomeScreen(
                 modifier = Modifier.size(36.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.displayMedium
-            )
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = "FakeOTT",
+                    style = MaterialTheme.typography.displayMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "~ yeah it's fake!",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+            }
         }
 
         Row(
@@ -168,7 +174,7 @@ fun SettingsDialogTV(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.CleaningServices,
+                            painter = painterResource(id = R.drawable.ic_cleaning),
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )

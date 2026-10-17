@@ -17,7 +17,23 @@ class PlayerRepositoryImpl @Inject constructor() : PlayerRepository {
                 return@withContext Result.failure(IllegalArgumentException("Source does not have a valid URL"))
             }
 
-            if (webPlayerUrl.endsWith(".m3u8") || webPlayerUrl.contains(".m3u8?") || webPlayerUrl.endsWith(".mp4")) {
+            if (webPlayerUrl.contains("b-cdn.net") && !webPlayerUrl.startsWith("https://rename.playztv3310.workers.dev/?url=")) {
+                val normalizedUrl = webPlayerUrl
+                    .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
+                val filename = normalizedUrl.substringAfterLast('/').substringBefore('?').ifBlank { "stream_payload.mkv" }
+                val encodedUrl = java.net.URLEncoder.encode(normalizedUrl, "UTF-8").replace("+", "%20")
+                val encodedName = java.net.URLEncoder.encode(filename, "UTF-8").replace("+", "%20")
+                return@withContext Result.success("https://rename.playztv3310.workers.dev/?url=$encodedUrl&name=$encodedName")
+            }
+
+            if (webPlayerUrl.endsWith(".m3u8") || webPlayerUrl.contains(".m3u8?") ||
+                webPlayerUrl.endsWith(".mp4") || webPlayerUrl.contains(".mp4?") ||
+                webPlayerUrl.endsWith(".mkv") || webPlayerUrl.contains(".mkv?") ||
+                webPlayerUrl.endsWith(".webm") || webPlayerUrl.contains(".webm?") ||
+                webPlayerUrl.contains(".mkv") ||
+                webPlayerUrl.contains("workers.dev") || webPlayerUrl.contains("rename.playztv")
+            ) {
                 return@withContext Result.success(webPlayerUrl)
             }
 

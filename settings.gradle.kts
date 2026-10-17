@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "free&live"
+rootProject.name = "FakeOTT"
 include(":app")

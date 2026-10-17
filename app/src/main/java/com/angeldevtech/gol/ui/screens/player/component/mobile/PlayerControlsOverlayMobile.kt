@@ -3,7 +3,9 @@ package com.angeldevtech.gol.ui.screens.player.component.mobile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +24,16 @@ import androidx.compose.ui.unit.max
 import com.angeldevtech.gol.ui.screens.player.PlayerUIState
 import com.angeldevtech.gol.ui.screens.player.PlayerViewModel
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+
 @Composable
 fun PlayerControlsOverlayMobile(
     state: PlayerUIState.Success,
     viewModel: PlayerViewModel,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDoubleTapSeek: ((Boolean) -> Unit)? = null
 ) {
     val insets = WindowInsets.safeDrawing.asPaddingValues()
     val layoutDirection = LocalLayoutDirection.current
@@ -42,11 +48,17 @@ fun PlayerControlsOverlayMobile(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = { viewModel.hideOverlay(0) }
-                )
+                .pointerInput(state.isMovieSeries) {
+                    detectTapGestures(
+                        onTap = { viewModel.hideOverlay(0) },
+                        onDoubleTap = { offset ->
+                            if (state.isMovieSeries && onDoubleTapSeek != null) {
+                                val isForward = offset.x >= size.width / 2
+                                onDoubleTapSeek(isForward)
+                            }
+                        }
+                    )
+                }
         )
 
         PlayerOverlayHeaderMobile(
@@ -84,9 +96,7 @@ fun PlayerControlsOverlayMobile(
             )
         }
 
-        PlayerOverlaySourcesMobile(
-            state = state,
-            viewModel = viewModel,
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
@@ -95,7 +105,23 @@ fun PlayerControlsOverlayMobile(
                     top = topPadding,
                     end = rightPadding,
                     bottom = bottomPadding
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (state.isMovieSeries) {
+                VideoPlayLine(
+                    currentPositionMs = state.currentPositionMs,
+                    durationMs = state.durationMs,
+                    onSeek = { targetMs -> viewModel.seekTo(targetMs) },
+                    modifier = Modifier.fillMaxWidth()
                 )
-        )
+            }
+
+            PlayerOverlaySourcesMobile(
+                state = state,
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }

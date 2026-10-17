@@ -64,6 +64,28 @@ class PlayerViewModel @Inject constructor(
         return application.getString(resId, *formatArgs)
     }
 
+    private var progressUpdateJob: Job? = null
+
+    private fun startProgressUpdates() {
+        progressUpdateJob?.cancel()
+        progressUpdateJob = viewModelScope.launch {
+            while (true) {
+                delay(500)
+                val currentState = _uiState.value
+                if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
+                    fastPlayer?.let { fp ->
+                        val pos = fp.getCurrentPosition()
+                        val dur = fp.getDuration()
+                        _uiState.value = currentState.copy(
+                            currentPositionMs = pos,
+                            durationMs = dur
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             val currentState = _uiState.value
@@ -75,6 +97,11 @@ class PlayerViewModel @Inject constructor(
                 )
                 if (isPlaying) {
                     showOverlayTemporarily()
+                    if (currentState.isMovieSeries) {
+                        startProgressUpdates()
+                    }
+                } else {
+                    progressUpdateJob?.cancel()
                 }
             }
         }
@@ -84,13 +111,23 @@ class PlayerViewModel @Inject constructor(
             if (currentState is PlayerUIState.Success) {
                 when (playbackState) {
                     Player.STATE_READY -> {
-                        _uiState.value = currentState.copy(isLoadingNewSource = false)
+                        val dur = fastPlayer?.getDuration() ?: 0L
+                        val pos = fastPlayer?.getCurrentPosition() ?: 0L
+                        _uiState.value = currentState.copy(
+                            isLoadingNewSource = false,
+                            durationMs = if (currentState.isMovieSeries) dur else 0L,
+                            currentPositionMs = if (currentState.isMovieSeries) pos else 0L
+                        )
+                        if (currentState.isMovieSeries && currentState.isPlaying) {
+                            startProgressUpdates()
+                        }
                     }
                     Player.STATE_BUFFERING -> {
                         // buffering
                     }
                     Player.STATE_ENDED -> {
                         _uiState.value = currentState.copy(isPlaying = false)
+                        progressUpdateJob?.cancel()
                     }
                     else -> {}
                 }
@@ -168,13 +205,13 @@ class PlayerViewModel @Inject constructor(
                 }
                 return@launch
             }
-            cancelOverlayAutoHide()
-
+            val isMovie = scheduleItem.category == "Movies & Shows" || scheduleItem.leagueName.contains("Movie")
             _uiState.value = PlayerUIState.Success(
                 scheduleItem = scheduleItem,
                 selectedEmbedIndex = 0,
                 isMuted = fastPlayer?.isMuted() ?: false,
-                aspectRatioMode = getSavedAspectRatioMode()
+                aspectRatioMode = getSavedAspectRatioMode(),
+                isMovieSeries = isMovie
             )
             loadContentForIndex(0)
         }
@@ -342,7 +379,26 @@ class PlayerViewModel @Inject constructor(
         _isInPipMode.value = false
     }
 
+    fun seekTo(positionMs: Long) {
+        val currentState = _uiState.value
+        if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
+            fastPlayer?.seekTo(positionMs)
+            _uiState.value = currentState.copy(currentPositionMs = positionMs)
+        }
+    }
+
+    fun seekBy(deltaMs: Long) {
+        val currentState = _uiState.value
+        if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
+            fastPlayer?.seekBy(deltaMs)
+            val newPos = fastPlayer?.getCurrentPosition() ?: (currentState.currentPositionMs + deltaMs).coerceAtLeast(0L)
+            _uiState.value = currentState.copy(currentPositionMs = newPos)
+            showOverlayTemporarily()
+        }
+    }
+
     fun stopPlayer() {
+        progressUpdateJob?.cancel()
         val currentState = _uiState.value
         if (currentState is PlayerUIState.Success) {
             fastPlayer?.exoPlayer?.stop()
@@ -350,6 +406,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     fun releasePlayer() {
+        progressUpdateJob?.cancel()
         _shouldEnterPipMode.value = false
         fastPlayer?.let { fp ->
             fp.exoPlayer.removeListener(playerListener)
@@ -367,6 +424,7 @@ class PlayerViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        progressUpdateJob?.cancel()
         releasePlayer()
     }
 }
