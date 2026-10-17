@@ -168,6 +168,8 @@ class PlayerViewModel @Inject constructor(
                 _uiState.value = currentState.copy(
                     isOverlayVisible = true,
                     isLoadingNewSource = false,
+                    isBuffering = false,
+                    isPlaying = false,
                     error = errorMessage
                 )
             }
@@ -299,12 +301,16 @@ class PlayerViewModel @Inject constructor(
                         .onFailure { extractionError ->
                             _uiState.value = currentState.copy(
                                 isLoadingNewSource = false,
+                                isBuffering = false,
+                                isPlaying = false,
                                 error = extractionError.localizedMessage
                             )
                         }
                 } catch (e: Exception) {
                     _uiState.value = currentState.copy(
                         isLoadingNewSource = false,
+                        isBuffering = false,
+                        isPlaying = false,
                         error = e.localizedMessage ?: getString(R.string.error_unexpected_loading)
                     )
                 }

@@ -159,8 +159,8 @@ fun PlayerScreen(
                     )
                 }
 
-                // Loading indicator during buffering / seeking
-                if (state.isBuffering || state.isLoadingNewSource) {
+                // Loading indicator during buffering / seeking (only when no error)
+                if ((state.isBuffering || state.isLoadingNewSource) && state.error == null) {
                     LoadingIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )

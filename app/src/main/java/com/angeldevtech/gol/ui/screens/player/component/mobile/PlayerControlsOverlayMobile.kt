@@ -78,15 +78,15 @@ fun PlayerControlsOverlayMobile(
                 )
         )
 
-        if (state.isLoadingNewSource) {
-            LoadingIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
-        } else if (state.error != null) {
+        if (state.error != null) {
             PlayerOverlayErrorMobile(
                 error = state.error,
                 attemptRecovery = { viewModel.attemptPlayerRecovery() },
                 modifier = Modifier.fillMaxSize()
+            )
+        } else if (state.isLoadingNewSource) {
+            LoadingIndicator(
+                modifier = Modifier.align(Alignment.Center)
             )
         } else {
             PlayerOverlayPlayPauseButtonMobile(

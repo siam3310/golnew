@@ -70,17 +70,17 @@ fun PlayerControlsOverlay(
                 .padding(horizontal = 48.dp, vertical = 24.dp)
         )
 
-        if (state.isLoadingNewSource) {
-            LoadingIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-            )
-        } else if (state.error != null) {
+        if (state.error != null) {
             PlayerOverlayError(
                 error = state.error,
                 attemptRecovery = { viewModel.attemptPlayerRecovery() },
                 errorButtonFocusRequester = errorButtonFocusRequester,
                 modifier = Modifier.fillMaxSize()
+            )
+        } else if (state.isLoadingNewSource) {
+            LoadingIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
             )
         } else if (state.isMovieSeries) {
             PlayerMovieControlsTv(

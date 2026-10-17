@@ -55,7 +55,35 @@ class FastMedia3Player(private val context: Context) {
     private val contentTypeAttempts = mutableMapOf<Int, Boolean>()
 
     // 2. Anti-blocking network headers and multi-protocol fallback
-    fun playStream(url: String, forcedType: Int? = null) {
+    fun playStream(rawUrl: String, forcedType: Int? = null) {
+        val proxyPrefix = "https://rename.playztv3310.workers.dev/?url="
+        val url = when {
+            rawUrl.startsWith(proxyPrefix) -> {
+                rawUrl.replace("mrtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("dertg.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("mrtgh", "lrtyuh")
+                    .replace("dertg", "lrtyuh")
+                    .replace("crtgh", "lrtyuh")
+            }
+            rawUrl.contains("b-cdn.net") || rawUrl.contains(".mkv") -> {
+                val normalized = rawUrl
+                    .replace("mrtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("dertg.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("mrtgh", "lrtyuh")
+                    .replace("dertg", "lrtyuh")
+                    .replace("crtgh", "lrtyuh")
+                try {
+                    val encoded = java.net.URLEncoder.encode(normalized, "UTF-8").replace("+", "%20")
+                    "$proxyPrefix$encoded"
+                } catch (e: Exception) {
+                    "$proxyPrefix$normalized"
+                }
+            }
+            else -> rawUrl
+        }
+
         val uri = Uri.parse(url)
         val userAgent = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36"
 

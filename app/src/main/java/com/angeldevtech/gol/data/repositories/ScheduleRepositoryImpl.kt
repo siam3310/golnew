@@ -126,11 +126,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         if (rawUrl.isBlank()) return rawUrl
         val proxyPrefix = "https://rename.playztv3310.workers.dev/?url="
 
-        // Normalize outdated CDN pullzones (e.g. mrtgh, crtgh) to the live active pullzone (dertg)
+        // Normalize outdated CDN pullzones (e.g. mrtgh, crtgh, dertg) to the live active pullzone (lrtyuh)
         val normalizedUrl = rawUrl
-            .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
-            .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
-            .replace("mrtgh", "dertg")
+            .replace("mrtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+            .replace("crtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+            .replace("dertg.b-cdn.net", "lrtyuh.b-cdn.net")
+            .replace("mrtgh", "lrtyuh")
+            .replace("dertg", "lrtyuh")
+            .replace("crtgh", "lrtyuh")
 
         if (normalizedUrl.startsWith(proxyPrefix)) return normalizedUrl
 

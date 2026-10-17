@@ -19,26 +19,30 @@ class PlayerRepositoryImpl @Inject constructor() : PlayerRepository {
 
             if (webPlayerUrl.contains("rename.playztv3310.workers.dev") || webPlayerUrl.contains("workers.dev")) {
                 val normalizedUrl = webPlayerUrl
-                    .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
-                    .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
-                    .replace("mrtgh", "dertg")
+                    .replace("mrtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("dertg.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("mrtgh", "lrtyuh")
+                    .replace("dertg", "lrtyuh")
+                    .replace("crtgh", "lrtyuh")
                 return@withContext Result.success(normalizedUrl)
             }
 
-            if (webPlayerUrl.contains("b-cdn.net")) {
+            if (webPlayerUrl.contains("b-cdn.net") || webPlayerUrl.contains(".mkv")) {
                 val normalizedUrl = webPlayerUrl
-                    .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
-                    .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
-                    .replace("mrtgh", "dertg")
+                    .replace("mrtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("dertg.b-cdn.net", "lrtyuh.b-cdn.net")
+                    .replace("mrtgh", "lrtyuh")
+                    .replace("dertg", "lrtyuh")
+                    .replace("crtgh", "lrtyuh")
                 val encodedUrl = java.net.URLEncoder.encode(normalizedUrl, "UTF-8").replace("+", "%20")
                 return@withContext Result.success("https://rename.playztv3310.workers.dev/?url=$encodedUrl")
             }
 
             if (webPlayerUrl.endsWith(".m3u8") || webPlayerUrl.contains(".m3u8?") ||
                 webPlayerUrl.endsWith(".mp4") || webPlayerUrl.contains(".mp4?") ||
-                webPlayerUrl.endsWith(".mkv") || webPlayerUrl.contains(".mkv?") ||
-                webPlayerUrl.endsWith(".webm") || webPlayerUrl.contains(".webm?") ||
-                webPlayerUrl.contains(".mkv")
+                webPlayerUrl.endsWith(".webm") || webPlayerUrl.contains(".webm?")
             ) {
                 return@withContext Result.success(webPlayerUrl)
             }
