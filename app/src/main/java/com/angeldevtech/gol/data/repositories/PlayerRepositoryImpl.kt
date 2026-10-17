@@ -17,22 +17,28 @@ class PlayerRepositoryImpl @Inject constructor() : PlayerRepository {
                 return@withContext Result.failure(IllegalArgumentException("Source does not have a valid URL"))
             }
 
-            if (webPlayerUrl.contains("b-cdn.net") && !webPlayerUrl.startsWith("https://rename.playztv3310.workers.dev/?url=")) {
+            if (webPlayerUrl.contains("rename.playztv3310.workers.dev") || webPlayerUrl.contains("workers.dev")) {
                 val normalizedUrl = webPlayerUrl
                     .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
                     .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
-                val filename = normalizedUrl.substringAfterLast('/').substringBefore('?').ifBlank { "stream_payload.mkv" }
+                    .replace("mrtgh", "dertg")
+                return@withContext Result.success(normalizedUrl)
+            }
+
+            if (webPlayerUrl.contains("b-cdn.net")) {
+                val normalizedUrl = webPlayerUrl
+                    .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
+                    .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
+                    .replace("mrtgh", "dertg")
                 val encodedUrl = java.net.URLEncoder.encode(normalizedUrl, "UTF-8").replace("+", "%20")
-                val encodedName = java.net.URLEncoder.encode(filename, "UTF-8").replace("+", "%20")
-                return@withContext Result.success("https://rename.playztv3310.workers.dev/?url=$encodedUrl&name=$encodedName")
+                return@withContext Result.success("https://rename.playztv3310.workers.dev/?url=$encodedUrl")
             }
 
             if (webPlayerUrl.endsWith(".m3u8") || webPlayerUrl.contains(".m3u8?") ||
                 webPlayerUrl.endsWith(".mp4") || webPlayerUrl.contains(".mp4?") ||
                 webPlayerUrl.endsWith(".mkv") || webPlayerUrl.contains(".mkv?") ||
                 webPlayerUrl.endsWith(".webm") || webPlayerUrl.contains(".webm?") ||
-                webPlayerUrl.contains(".mkv") ||
-                webPlayerUrl.contains("workers.dev") || webPlayerUrl.contains("rename.playztv")
+                webPlayerUrl.contains(".mkv")
             ) {
                 return@withContext Result.success(webPlayerUrl)
             }

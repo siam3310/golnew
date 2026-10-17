@@ -13,7 +13,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.angeldevtech.gol"
+        applicationId = "com.siam3310.fakeott"
         minSdk = 28
         targetSdk = 35
         versionCode = 1

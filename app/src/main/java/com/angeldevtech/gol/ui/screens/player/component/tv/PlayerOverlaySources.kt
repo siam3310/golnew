@@ -53,20 +53,29 @@ fun PlayerOverlaySources(
                     val isSelected = index == state.selectedEmbedIndex
 
                     Button(
-                        onClick = { viewModel.selectEmbedIndex(index) },
+                        onClick = {
+                            viewModel.selectEmbedIndex(index)
+                            viewModel.showOverlayTemporarily()
+                        },
                         colors = ButtonDefaults.colors(
-                            containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Black.copy(alpha = 0.5f),
                             contentColor = if (isSelected) MaterialTheme.colorScheme.surface else Color.White,
+                            focusedContainerColor = Color.White,
+                            focusedContentColor = Color.Black
                         ),
                         border = ButtonDefaults.border(
                             border = Border(
-                                border = BorderStroke(1.dp, Color.Gray)
+                                border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) Color.White else Color.Gray)
+                            ),
+                            focusedBorder = Border(
+                                border = BorderStroke(3.dp, Color.White)
                             )
                         ),
                         modifier = if (isSelected) Modifier.focusRequester(sourcesListFocusRequester) else Modifier
                     ) {
                         Text(
                             text = embed.name,
+                            fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.Medium
                         )
                     }
                 }

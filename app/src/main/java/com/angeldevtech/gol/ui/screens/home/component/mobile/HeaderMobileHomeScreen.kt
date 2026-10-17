@@ -53,12 +53,6 @@ fun HeaderMobileHomeScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.app_logo),
-                contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier.size(28.dp)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(

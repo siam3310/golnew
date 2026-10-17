@@ -125,22 +125,19 @@ class ScheduleRepositoryImpl @Inject constructor(
     private fun wrapMovieStreamUrl(rawUrl: String): String {
         if (rawUrl.isBlank()) return rawUrl
         val proxyPrefix = "https://rename.playztv3310.workers.dev/?url="
-        if (rawUrl.startsWith(proxyPrefix)) return rawUrl
 
         // Normalize outdated CDN pullzones (e.g. mrtgh, crtgh) to the live active pullzone (dertg)
         val normalizedUrl = rawUrl
             .replace("mrtgh.b-cdn.net", "dertg.b-cdn.net")
             .replace("crtgh.b-cdn.net", "dertg.b-cdn.net")
+            .replace("mrtgh", "dertg")
 
-        val filename = normalizedUrl.substringAfterLast('/').substringBefore('?')
-            .ifBlank { "stream_payload.mkv" }
+        if (normalizedUrl.startsWith(proxyPrefix)) return normalizedUrl
 
         return try {
             val encodedUrl = java.net.URLEncoder.encode(normalizedUrl, "UTF-8")
                 .replace("+", "%20")
-            val encodedName = java.net.URLEncoder.encode(filename, "UTF-8")
-                .replace("+", "%20")
-            "$proxyPrefix$encodedUrl&name=$encodedName"
+            "$proxyPrefix$encodedUrl"
         } catch (e: Exception) {
             "$proxyPrefix$normalizedUrl"
         }

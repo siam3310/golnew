@@ -225,14 +225,12 @@ fun MobilePlayerScreen(
             }
 
             is PlayerUIState.Success -> {
-                var seekFeedbackText by remember { mutableStateOf<String?>(null) }
-                var seekFeedbackSide by remember { mutableStateOf<Int?>(null) } // -1 = left, 1 = right
+                var activeSeekDelta by remember { mutableStateOf<Long?>(null) }
 
-                LaunchedEffect(seekFeedbackText) {
-                    if (seekFeedbackText != null) {
+                LaunchedEffect(activeSeekDelta) {
+                    if (activeSeekDelta != null) {
                         kotlinx.coroutines.delay(700)
-                        seekFeedbackText = null
-                        seekFeedbackSide = null
+                        activeSeekDelta = null
                     }
                 }
 
@@ -240,8 +238,7 @@ fun MobilePlayerScreen(
                     if (state.isMovieSeries) {
                         val delta = if (isForward) 10_000L else -10_000L
                         viewModel.seekBy(delta)
-                        seekFeedbackText = if (isForward) "+10s" else "-10s"
-                        seekFeedbackSide = if (isForward) 1 else -1
+                        activeSeekDelta = delta
                     }
                 }
 
@@ -276,71 +273,17 @@ fun MobilePlayerScreen(
                         }
                 )
 
-                // Visual Seek Feedback Overlay (for Movie Series double tap)
-                AnimatedVisibility(
-                    visible = seekFeedbackText != null,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        if (seekFeedbackSide == -1) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .padding(start = 56.dp)
-                                    .background(
-                                        Color.Black.copy(alpha = 0.75f),
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Text(
-                                        text = "⏪",
-                                        fontSize = 20.sp
-                                    )
-                                    Text(
-                                        text = "10s",
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                }
-                            }
-                        } else if (seekFeedbackSide == 1) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .padding(end = 56.dp)
-                                    .background(
-                                        Color.Black.copy(alpha = 0.75f),
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Text(
-                                        text = "10s",
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                    Text(
-                                        text = "⏩",
-                                        fontSize = 20.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
+                // Loading indicator during buffering / seeking
+                if (state.isBuffering || state.isLoadingNewSource) {
+                    LoadingIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
+
+                // Material Design animated 10s seek indicator
+                com.angeldevtech.gol.ui.screens.player.component.MaterialSeekAnimation(
+                    seekDeltaMs = activeSeekDelta
+                )
 
                 AnimatedVisibility(
                     visible = state.isOverlayVisible && !isInPipMode,

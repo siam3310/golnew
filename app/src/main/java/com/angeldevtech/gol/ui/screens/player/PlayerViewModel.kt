@@ -70,16 +70,21 @@ class PlayerViewModel @Inject constructor(
         progressUpdateJob?.cancel()
         progressUpdateJob = viewModelScope.launch {
             while (true) {
-                delay(500)
+                delay(1000)
                 val currentState = _uiState.value
                 if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
-                    fastPlayer?.let { fp ->
-                        val pos = fp.getCurrentPosition()
-                        val dur = fp.getDuration()
-                        _uiState.value = currentState.copy(
-                            currentPositionMs = pos,
-                            durationMs = dur
-                        )
+                    // Only update position if overlay is visible to maintain smooth 60fps playback without recomposition overhead
+                    if (currentState.isOverlayVisible) {
+                        fastPlayer?.let { fp ->
+                            val pos = fp.getCurrentPosition()
+                            val dur = fp.getDuration()
+                            if (Math.abs(pos - currentState.currentPositionMs) >= 500 || currentState.durationMs != dur) {
+                                _uiState.value = currentState.copy(
+                                    currentPositionMs = pos,
+                                    durationMs = dur
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -93,7 +98,8 @@ class PlayerViewModel @Inject constructor(
                 _shouldEnterPipMode.value = isPlaying
                 _uiState.value = currentState.copy(
                     isPlaying = isPlaying,
-                    isLoadingNewSource = false
+                    isLoadingNewSource = false,
+                    isBuffering = false
                 )
                 if (isPlaying) {
                     showOverlayTemporarily()
@@ -115,6 +121,7 @@ class PlayerViewModel @Inject constructor(
                         val pos = fastPlayer?.getCurrentPosition() ?: 0L
                         _uiState.value = currentState.copy(
                             isLoadingNewSource = false,
+                            isBuffering = false,
                             durationMs = if (currentState.isMovieSeries) dur else 0L,
                             currentPositionMs = if (currentState.isMovieSeries) pos else 0L
                         )
@@ -123,10 +130,10 @@ class PlayerViewModel @Inject constructor(
                         }
                     }
                     Player.STATE_BUFFERING -> {
-                        // buffering
+                        _uiState.value = currentState.copy(isBuffering = true)
                     }
                     Player.STATE_ENDED -> {
-                        _uiState.value = currentState.copy(isPlaying = false)
+                        _uiState.value = currentState.copy(isPlaying = false, isBuffering = false)
                         progressUpdateJob?.cancel()
                     }
                     else -> {}
@@ -205,7 +212,13 @@ class PlayerViewModel @Inject constructor(
                 }
                 return@launch
             }
-            val isMovie = scheduleItem.category == "Movies & Shows" || scheduleItem.leagueName.contains("Movie")
+            val isMovie = scheduleItem.category.contains("Movie", ignoreCase = true) ||
+                    scheduleItem.category.contains("Show", ignoreCase = true) ||
+                    scheduleItem.category.contains("Series", ignoreCase = true) ||
+                    scheduleItem.leagueName.contains("Movie", ignoreCase = true) ||
+                    scheduleItem.leagueName.contains("Series", ignoreCase = true) ||
+                    (!scheduleItem.isLive && scheduleItem.id >= 500000) ||
+                    scheduleItem.embeds.any { it.url.contains(".mkv", ignoreCase = true) || it.url.contains("rename.playztv", ignoreCase = true) }
             _uiState.value = PlayerUIState.Success(
                 scheduleItem = scheduleItem,
                 selectedEmbedIndex = 0,
@@ -344,9 +357,13 @@ class PlayerViewModel @Inject constructor(
     fun showOverlayTemporarily() {
         val currentState = _uiState.value
         if (currentState is PlayerUIState.Success) {
-            if (!currentState.isOverlayVisible) {
-                _uiState.value = currentState.copy(isOverlayVisible = true)
-            }
+            val pos = fastPlayer?.getCurrentPosition() ?: currentState.currentPositionMs
+            val dur = fastPlayer?.getDuration() ?: currentState.durationMs
+            _uiState.value = currentState.copy(
+                isOverlayVisible = true,
+                currentPositionMs = pos,
+                durationMs = if (dur > 0) dur else currentState.durationMs
+            )
             overlayAutoHideJob?.cancel()
             overlayAutoHideJob = hideOverlay()
         }
@@ -382,17 +399,24 @@ class PlayerViewModel @Inject constructor(
     fun seekTo(positionMs: Long) {
         val currentState = _uiState.value
         if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
+            _uiState.value = currentState.copy(
+                currentPositionMs = positionMs,
+                isBuffering = true
+            )
             fastPlayer?.seekTo(positionMs)
-            _uiState.value = currentState.copy(currentPositionMs = positionMs)
         }
     }
 
     fun seekBy(deltaMs: Long) {
         val currentState = _uiState.value
         if (currentState is PlayerUIState.Success && currentState.isMovieSeries) {
+            val currentPos = fastPlayer?.getCurrentPosition() ?: currentState.currentPositionMs
+            val newPos = (currentPos + deltaMs).coerceAtLeast(0L)
+            _uiState.value = currentState.copy(
+                currentPositionMs = newPos,
+                isBuffering = true
+            )
             fastPlayer?.seekBy(deltaMs)
-            val newPos = fastPlayer?.getCurrentPosition() ?: (currentState.currentPositionMs + deltaMs).coerceAtLeast(0L)
-            _uiState.value = currentState.copy(currentPositionMs = newPos)
             showOverlayTemporarily()
         }
     }

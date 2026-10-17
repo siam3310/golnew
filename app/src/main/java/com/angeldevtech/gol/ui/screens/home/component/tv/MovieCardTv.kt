@@ -80,26 +80,25 @@ fun MovieCardTv(
             shape = RoundedCornerShape(14.dp)
         ),
         modifier = modifier
-            .fillMaxWidth()
-            .height(110.dp)
+            .height(115.dp)
             .testTag("movie_card_tv_${movie.id}")
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 28.dp, vertical = 16.dp),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                // Movie Series Name in center/prominent text
+                // Movie Series Name in prominent text
                 Text(
                     text = movie.title,
                     style = MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 22.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold
                     ),
                     color = Color.White,

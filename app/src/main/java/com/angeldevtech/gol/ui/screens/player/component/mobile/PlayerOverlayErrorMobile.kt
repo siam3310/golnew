@@ -31,7 +31,7 @@ fun PlayerOverlayErrorMobile(
         Button(
             onClick = attemptRecovery
         ) {
-            Text(text = "Reintentar")
+            Text(text = "Retry")
         }
     }
 }

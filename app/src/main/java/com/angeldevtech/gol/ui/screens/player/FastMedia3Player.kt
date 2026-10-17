@@ -25,7 +25,7 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 @OptIn(UnstableApi::class)
 class FastMedia3Player(private val context: Context) {
 
-    // 1. Ultra-fast buffering and hardware decoder initialization
+    // 1. Ultra-fast, smooth buffering and hardware decoder initialization
     val exoPlayer: ExoPlayer = ExoPlayer.Builder(
         context,
         DefaultRenderersFactory(context).apply {
@@ -35,9 +35,9 @@ class FastMedia3Player(private val context: Context) {
     ).apply {
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                /* minBufferMs = */ 15_000,
-                /* maxBufferMs = */ 50_000,
-                /* bufferForPlaybackMs = */ 2_500, // Starts immediately with only 2.5s buffer
+                /* minBufferMs = */ 30_000,
+                /* maxBufferMs = */ 60_000,
+                /* bufferForPlaybackMs = */ 3_000,
                 /* bufferForPlaybackAfterRebufferMs = */ 5_000
             )
             .setPrioritizeTimeOverSizeThresholds(true)
@@ -45,6 +45,11 @@ class FastMedia3Player(private val context: Context) {
         setLoadControl(loadControl)
     }.build().apply {
         playWhenReady = true
+        // Turn off subtitles completely
+        trackSelectionParameters = trackSelectionParameters
+            .buildUpon()
+            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+            .build()
     }
 
     private val contentTypeAttempts = mutableMapOf<Int, Boolean>()
@@ -68,8 +73,8 @@ class FastMedia3Player(private val context: Context) {
 
         val httpDataSourceFactory = DefaultHttpDataSource.Factory().apply {
             setUserAgent(userAgent)
-            setConnectTimeoutMs(8_000)
-            setReadTimeoutMs(10_000)
+            setConnectTimeoutMs(15_000)
+            setReadTimeoutMs(20_000)
             setKeepPostFor302Redirects(true)
             setAllowCrossProtocolRedirects(true)
             setDefaultRequestProperties(defaultHeaders)

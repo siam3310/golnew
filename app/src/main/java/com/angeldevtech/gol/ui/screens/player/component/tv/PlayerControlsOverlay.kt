@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -23,31 +26,27 @@ fun PlayerControlsOverlay(
     state: PlayerUIState.Success,
     viewModel: PlayerViewModel,
     isButtonEnabled: Boolean,
+    onSeekDelta: (Long) -> Unit = { delta -> viewModel.seekBy(delta) },
     modifier: Modifier = Modifier
 ) {
     val playPauseButtonFocusRequester = remember { FocusRequester() }
     val errorButtonFocusRequester = remember { FocusRequester() }
     val sourcesListFocusRequester = remember { FocusRequester() }
 
-    val focusEffectKey = remember(state) {
-        if (state.isLoadingNewSource) {
-            return@remember "Sources"
-        } else if (state.error != null) {
-            return@remember "Error"
-        } else {
-            return@remember "PausePlay"
-        }
-    }
+    var hasRequestedInitialFocus by remember { androidx.compose.runtime.mutableStateOf(false) }
 
-    LaunchedEffect(focusEffectKey) {
-        if (state.isOverlayVisible) {
-            if (state.isLoadingNewSource) {
-                sourcesListFocusRequester.requestFocus()
-            } else if (state.error != null) {
-                errorButtonFocusRequester.requestFocus()
-            } else {
-                playPauseButtonFocusRequester.requestFocus()
-            }
+    LaunchedEffect(state.isOverlayVisible) {
+        if (state.isOverlayVisible && !hasRequestedInitialFocus) {
+            hasRequestedInitialFocus = true
+            try {
+                if (state.error != null) {
+                    errorButtonFocusRequester.requestFocus()
+                } else {
+                    playPauseButtonFocusRequester.requestFocus()
+                }
+            } catch (_: Exception) {}
+        } else if (!state.isOverlayVisible) {
+            hasRequestedInitialFocus = false
         }
     }
 
@@ -83,6 +82,22 @@ fun PlayerControlsOverlay(
                 errorButtonFocusRequester = errorButtonFocusRequester,
                 modifier = Modifier.fillMaxSize()
             )
+        } else if (state.isMovieSeries) {
+            PlayerMovieControlsTv(
+                isPlaying = state.isPlaying,
+                onPlayPauseClick = {
+                    viewModel.togglePlayPause()
+                    viewModel.showOverlayTemporarily()
+                },
+                onSeekBackward = {
+                    onSeekDelta(-10_000L)
+                },
+                onSeekForward = {
+                    onSeekDelta(10_000L)
+                },
+                playPauseFocusRequester = playPauseButtonFocusRequester,
+                modifier = Modifier.align(Alignment.Center)
+            )
         } else {
             PlayerOverlayPlayPauseButton(
                 isPlaying = state.isPlaying,
@@ -103,10 +118,9 @@ fun PlayerControlsOverlay(
             verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
         ) {
             if (state.isMovieSeries) {
-                com.angeldevtech.gol.ui.screens.player.component.mobile.VideoPlayLine(
+                VideoPlayLineTv(
                     currentPositionMs = state.currentPositionMs,
                     durationMs = state.durationMs,
-                    onSeek = { targetMs -> viewModel.seekTo(targetMs) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }

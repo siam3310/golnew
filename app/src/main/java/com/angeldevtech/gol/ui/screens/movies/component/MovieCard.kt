@@ -78,14 +78,8 @@ fun MovieCard(
                     verticalArrangement = Arrangement.spacedBy(cardHeight * 0.04f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Center Top: Quality & Language badge
-                    val topBadgeText = buildString {
-                        if (movie.quality.isNotBlank()) append(movie.quality.uppercase())
-                        if (movie.language.isNotBlank()) {
-                            if (isNotEmpty()) append(" • ")
-                            append(movie.language.uppercase())
-                        }
-                    }
+                    // Center Top: Language badge only (no quality)
+                    val topBadgeText = movie.language.uppercase()
                     if (topBadgeText.isNotBlank()) {
                         Box(
                             modifier = Modifier

@@ -77,7 +77,7 @@ fun ErrorMobilePlayerScreen(
                         onBack()
                     }
                 ) {
-                    Text(text = "Volver a la página de inicio")
+                    Text(text = "Back to home page")
                 }
                 Button(
                     onClick = {
@@ -85,7 +85,7 @@ fun ErrorMobilePlayerScreen(
                         retry()
                     }
                 ) {
-                    Text(text = "Reintentar")
+                    Text(text = "Retry")
                 }
             }
         }

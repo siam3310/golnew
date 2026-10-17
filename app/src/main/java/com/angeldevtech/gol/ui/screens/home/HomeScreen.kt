@@ -1,11 +1,14 @@
 package com.angeldevtech.gol.ui.screens.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -161,18 +164,50 @@ fun HomeScreen(
                                     modifier = Modifier.padding(horizontal = 48.dp, vertical = 20.dp)
                                 )
                             }
-                            items(
-                                items = movieList,
-                                key = { "movie_${it.id}" },
-                                contentType = { "MovieItemTv" }
-                            ) { movie ->
-                                MovieCardTv(
-                                    movie = movie,
-                                    onClick = { onItemSelected(movie.toScheduleItem()) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 48.dp, vertical = 6.dp)
-                                )
+                            val half = (movieList.size + 1) / 2
+                            val row1 = movieList.take(half)
+                            val row2 = movieList.drop(half)
+
+                            item(key = "tv_movies_row_1") {
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                    contentPadding = PaddingValues(horizontal = 48.dp),
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                ) {
+                                    items(
+                                        items = row1,
+                                        key = { "tv_m1_${it.id}" },
+                                        contentType = { "MovieItemTv" }
+                                    ) { movie ->
+                                        MovieCardTv(
+                                            movie = movie,
+                                            onClick = { onItemSelected(movie.toScheduleItem()) },
+                                            modifier = Modifier.width(340.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (row2.isNotEmpty()) {
+                                item(key = "tv_movies_row_2") {
+                                    LazyRow(
+                                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                        contentPadding = PaddingValues(horizontal = 48.dp),
+                                        modifier = Modifier.padding(bottom = 24.dp)
+                                    ) {
+                                        items(
+                                            items = row2,
+                                            key = { "tv_m2_${it.id}" },
+                                            contentType = { "MovieItemTv" }
+                                        ) { movie ->
+                                            MovieCardTv(
+                                                movie = movie,
+                                                onClick = { onItemSelected(movie.toScheduleItem()) },
+                                                modifier = Modifier.width(340.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     } else {
@@ -185,18 +220,50 @@ fun HomeScreen(
                                     modifier = Modifier.padding(horizontal = 48.dp, vertical = 20.dp)
                                 )
                             }
-                            items(
-                                items = movieList,
-                                key = { "movie_${it.id}" },
-                                contentType = { "MovieItemTv" }
-                            ) { movie ->
-                                MovieCardTv(
-                                    movie = movie,
-                                    onClick = { onItemSelected(movie.toScheduleItem()) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 48.dp, vertical = 6.dp)
-                                )
+                            val half = (movieList.size + 1) / 2
+                            val row1 = movieList.take(half)
+                            val row2 = movieList.drop(half)
+
+                            item(key = "tv_movies_row_1_alt") {
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                    contentPadding = PaddingValues(horizontal = 48.dp),
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                ) {
+                                    items(
+                                        items = row1,
+                                        key = { "tv_m1_alt_${it.id}" },
+                                        contentType = { "MovieItemTv" }
+                                    ) { movie ->
+                                        MovieCardTv(
+                                            movie = movie,
+                                            onClick = { onItemSelected(movie.toScheduleItem()) },
+                                            modifier = Modifier.width(340.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (row2.isNotEmpty()) {
+                                item(key = "tv_movies_row_2_alt") {
+                                    LazyRow(
+                                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                        contentPadding = PaddingValues(horizontal = 48.dp),
+                                        modifier = Modifier.padding(bottom = 24.dp)
+                                    ) {
+                                        items(
+                                            items = row2,
+                                            key = { "tv_m2_alt_${it.id}" },
+                                            contentType = { "MovieItemTv" }
+                                        ) { movie ->
+                                            MovieCardTv(
+                                                movie = movie,
+                                                onClick = { onItemSelected(movie.toScheduleItem()) },
+                                                modifier = Modifier.width(340.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         } else {
                             item(contentType = "EmptyList") {

@@ -35,7 +35,7 @@ fun PlayerOverlayError(
             onClick = attemptRecovery,
             modifier = Modifier.focusRequester(errorButtonFocusRequester)
         ) {
-            Text(text = "Reintentar")
+            Text(text = "Retry")
         }
     }
 }

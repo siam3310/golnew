@@ -58,12 +58,6 @@ fun HeaderHomeScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.app_logo),
-                contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier.size(36.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "FakeOTT",

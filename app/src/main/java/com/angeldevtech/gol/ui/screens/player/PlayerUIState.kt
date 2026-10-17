@@ -15,6 +15,7 @@ sealed interface PlayerUIState {
         val selectedEmbedIndex: Int,
         val isOverlayVisible: Boolean = true,
         val isLoadingNewSource: Boolean = true,
+        val isBuffering: Boolean = false,
         val isLive: Boolean = false,
         val error: String? = null,
         val isPlaying: Boolean = false,
